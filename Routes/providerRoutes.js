@@ -2,6 +2,22 @@ const router = require('express').Router();
 
 const Provider = require('../models/Provider')
 
+const cors = require('cors');
+
+const whitelist = ["http://localhost:3000"]
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  credentials: true,
+}
+
+router.use(cors(corsOptions))
+
 // Create
 router.post('/', async (req, res) => {
 
@@ -16,7 +32,37 @@ router.post('/', async (req, res) => {
   } = req.body;
 
   if(!req.body) {
-    res.status(422).json({error: 'Os campos estão vazios.'})
+    res.status(422).json({error: "Campos vazios"})
+    return
+  }
+
+  if(!name) {
+    res.status(422).json({error: "Campo de 'name' vazio"})
+    return
+  }
+
+  if(!corporateName) {
+    res.status(422).json({error: "Campo de 'corporateName' vazio"})
+    return
+  }
+
+  if(!cnpj) {
+    res.status(422).json({error: "Campo de 'cnpj' vazio"})
+    return
+  }
+
+  if(!segment) {
+    res.status(422).json({error: "Campo de 'segment' vazio"})
+    return
+  }
+
+  if(!phone) {
+    res.status(422).json({error: "Campo de 'phone' vazio"})
+    return
+  }
+
+  if(!email) {
+    res.status(422).json({error: "Campo de 'email' vazio"})
     return
   }
 
@@ -72,7 +118,15 @@ router.get('/:id', async (req, res) => {
 // Update
 router.patch('/:id', async (req, res) => {
   const {id} = req.params
-  const {name, salary, approved} = req.body
+  const {
+    name,
+    corporateName,
+    cnpj,
+    segment,
+    address,
+    phone,
+    email,
+  } = req.body
 
   const provider = {
     name,
